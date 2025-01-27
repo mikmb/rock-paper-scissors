@@ -1,154 +1,91 @@
+let playerScore = 0;
+let computerScore = 0;
+const playerInputButtons = document.querySelectorAll(".rps-button");
+
 // getComputerChoice
 function getComputerChoice() {
   let randomNum = Math.floor(Math.random() * 3);
-  if (randomNum == 0) return "rock";
-  else if (randomNum == 1) return "paper";
-  else if (randomNum == 2) return "scissors";
+  if (randomNum == 0) return "Rock";
+  else if (randomNum == 1) return "Paper";
+  else if (randomNum == 2) return "Scissors";
 }
 
-// getHumanChoice
-function getHumanChoice() {
-  let answer = prompt(
-    "Pick one: Rock, Paper, Scissors. Write your choice please:"
-  ).toLowerCase();
-  if (answer != "rock" && answer != "paper" && answer != "scissors") {
-    alert("Please enter a valid input. Choices are: Rock, Paper, Scissors.");
-    answer = getHumanChoice();
-  }
-  return answer;
+function disableRPSbuttons() {
+  playerInputButtons.forEach((btn) => {
+    btn.disabled = true;
+    btn.style.backgroundColor = "#8a817c";
+  });
 }
 
-let huamnScore = 0;
-let computerScore = 0;
-
-function playRound(humanChoice, computerChoice) {
-  if (humanChoice === computerChoice) {
-    alert(
-      "It's tie.\nYour choice: " +
-        humanChoice +
-        ", Computer choice: " +
-        computerChoice
-    );
-  } else if (humanChoice === "rock" && computerChoice === "paper") {
-    computerScore++;
-    alert(
-      "Computer Win this round! Your choice: " +
-        humanChoice +
-        ", Computer choice: " +
-        computerChoice +
-        "\n" +
-        "Paper beats Rock!\n" +
-        "Your score: " +
-        huamnScore +
-        ", Computer score: " +
-        computerScore
-    );
-  } else if (humanChoice === "rock" && computerChoice === "scissors") {
-    huamnScore++;
-    alert(
-      "You Win this round! Your choice: " +
-        humanChoice +
-        ", Computer choice: " +
-        computerChoice +
-        "\n" +
-        "Rock beats Scissors!\n" +
-        "Your score: " +
-        huamnScore +
-        ", Computer score: " +
-        computerScore
-    );
-  } else if (humanChoice === "paper" && computerChoice === "rock") {
-    huamnScore++;
-    alert(
-      "You Win this round! Your choice: " +
-        humanChoice +
-        ", Computer choice: " +
-        computerChoice +
-        "\n" +
-        "Paper beats Rock!\n" +
-        "Your score: " +
-        huamnScore +
-        ", Computer score: " +
-        computerScore
-    );
-  } else if (humanChoice === "paper" && computerChoice === "scissors") {
-    computerScore++;
-    alert(
-      "Computer Win this round! Your choice: " +
-        humanChoice +
-        ", Computer choice: " +
-        computerChoice +
-        "\n" +
-        "Scissors beats Paper!\n" +
-        "Your score: " +
-        huamnScore +
-        ", Computer score: " +
-        computerScore
-    );
-  } else if (humanChoice === "scissors" && computerChoice === "paper") {
-    huamnScore++;
-    alert(
-      "You Win this round! Your choice: " +
-        humanChoice +
-        ", Computer choice: " +
-        computerChoice +
-        "\n" +
-        "Scissors beats Paper!\n" +
-        "Your score: " +
-        huamnScore +
-        ", Computer score: " +
-        computerScore
-    );
-  } else if (humanChoice === "scissors" && computerChoice === "rock") {
-    computerScore++;
-    alert(
-      "Computer Win this round! Your choice: " +
-        humanChoice +
-        ", Computer choice: " +
-        computerChoice +
-        "\n" +
-        "Rock beats Scissors!\n" +
-        "Your score: " +
-        huamnScore +
-        ", Computer score: " +
-        computerScore
-    );
-  }
+function enableRPSbuttons() {
+  playerInputButtons.forEach((btn) => (btn.disabled = false));
 }
 
-function playGame() {
-  alert("Best out of 5 rounds will win the Rock, Paper, Scissors Game!");
-  for (let i = 0; i < 5; i++) {
-    alert(`Round ${i + 1}`);
-    const humanSelection = getHumanChoice();
-    const computerSelection = getComputerChoice();
-    playRound(humanSelection, computerSelection);
+function showPlayAgainButton() {
+  const playAgainBtn = document.getElementById("play-again-btn");
+  playAgainBtn.style.display = "block";
+}
+function playRound(playerChoice) {
+  const computerChoice = getComputerChoice();
+  let result = "";
+
+  if (
+    (playerChoice == "Rock" && computerChoice == "Scissors") ||
+    (playerChoice == "Scissors" && computerChoice == "Paper") ||
+    (playerChoice == "Paper" && computerChoice == "Rock")
+  ) {
+    playerScore += 1;
+    result =
+      "\n\nYou Win! " +
+      playerChoice +
+      " beats " +
+      computerChoice +
+      ".\n\n" +
+      "Player Score: " +
+      playerScore +
+      "\nComputer Score: " +
+      computerScore;
+
+    if (playerScore === 5) {
+      result += "\n\nYou won the game!\n\n";
+      disableRPSbuttons();
+      showPlayAgainButton();
+    }
+  } else if (playerChoice == computerChoice) {
+    result +=
+      "\n\nIt's a tie.\n\n" +
+      "Player Score: " +
+      playerScore +
+      "\nComputer Score: " +
+      computerScore;
+  } else {
+    computerScore += 1;
+
+    result =
+      "\n\nYou lose! " +
+      computerChoice +
+      " beats " +
+      playerChoice +
+      ".\n\n" +
+      "Player Score: " +
+      playerScore +
+      "\nComputer Score: " +
+      computerScore;
+
+    if (computerScore == 5) {
+      result += "\n\nComputer won the game!\n\n";
+
+      disableRPSbuttons();
+      showPlayAgainButton();
+    }
   }
-  if (huamnScore > computerScore) {
-    alert(
-      "Congrats! You're the winner of this game!\n" +
-        "Your score: " +
-        huamnScore +
-        ", Computer score: " +
-        computerScore
-    );
-  } else if (huamnScore < computerScore) {
-    alert(
-      "You lost the game!\n" +
-        "Your score: " +
-        huamnScore +
-        ", Computer score: " +
-        computerScore
-    );
-  } else if (huamnScore == computerScore) {
-    alert(
-      "It's a tie!\n" +
-        "Your score: " +
-        huamnScore +
-        ", Computer score: " +
-        computerScore
-    );
-  }
+
+  document.getElementById("result").innerText = result;
 }
 
-playGame();
+// playGame();
+playerInputButtons.forEach((button) => {
+  button.addEventListener("click", function () {
+    playRound(button.innerHTML);
+  });
+});
